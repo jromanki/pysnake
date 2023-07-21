@@ -1,14 +1,12 @@
-'''--- pySnake - A Simple Snake Clone Made in Pygame by jromanki --- https://github.com/jromanki ---'''
-
+'''--- pySnake - A Snake Clone Made with Pygame by jromanki --- https://github.com/jromanki ---'''
 
 import pygame, sys, random
 pygame.font.init()
 
-WIDTH, HEIGHT = 400, 400
+WIDTH, HEIGHT = 480, 480    # The game map size is dynamic, changing the resolution or SQUARE_SIZE/LINE_WIDTH will change the number of tiles.
 FONT = pygame.font.SysFont('comicsans', 50)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("pySnake")
-
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -16,9 +14,10 @@ GREY = (20, 20, 20)
 RED = (255, 0, 0)
 GREEN = (0, 200, 0)
 
-SQARE_SIZE = 18
-LINE_WIDTH = 2
-GAMESPEEDMOD = 6    # The higher the slower the game speeds up
+SQARE_SIZE = 18             # WIDTH / (SQUARE_SIZE + LINE_WIDTH) = number of tiles
+LINE_WIDTH = 2              # For example 640/(18+2) = 32 tiles horizontally
+
+GAMESPEEDMOD = 6            # The higher the slower the game speeds up
 
 
 def createGrid(grid):
@@ -31,23 +30,21 @@ def createGrid(grid):
 
 
 def handleMovement(grid, direction, head, width, height):
-    grid[head[0]][head[1]][1] = 'dead'
-    
     if direction == 'R':
         head[0] += 1
-        if head[0] > width:
+        if head[0] > width:     # This lines handle the teleporting borders of the map 
             head[0] = 0
     if direction == 'L':
         head[0] -= 1
-        if head[0] < 0:
+        if head[0] < 0:         # --- || ---
             head[0] = width
     if direction == 'D':
         head[1] += 1
-        if head[1] > height:
+        if head[1] > height:    # --- || ---
             head[1] = 0
     if direction == 'U':
         head[1] -= 1
-        if head[1] < 0:
+        if head[1] < 0:         # --- || ---
             head[1] = height
     return grid, head
 
@@ -125,16 +122,16 @@ def main():
     tailLength = 0
     direction, prevDir,  = '', ''
 
-    grid = createGrid(grid)
+    grid = createGrid(grid)         # Creattes initial grid state, where all of the tiles are dead
 
-    width = len(grid) - 1
+    width = len(grid) - 1           # The -1 is because the lists are numerated from 0
     height = len(grid[0]) - 1
-    head = [width//2, height//2]  # Player's starting position, head of the snake
+    head = [width//2, height//2]    # Player's starting position, head of the snake
     
-    gameSpeed = 7 # Initial game speed
+    gameSpeed = 7   # Initial game speed
 
     while run:
-        clock.tick(gameSpeed) # The game increases in difficulty by increasing FPS
+        clock.tick(gameSpeed)       # The game increases in difficulty by increasing FPS
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -157,6 +154,7 @@ def main():
         grid, tail = makeTail(grid, head, tail, tailLength)
 
         food, tailLength, gameSpeed = handleFood(grid, tail, food, tailLength, width, height, gameSpeed)
+        # The score is equal to the amount of food eaten and the lenth of the snake
 
         if handleColisions(head, tail) == True:
             run = False
